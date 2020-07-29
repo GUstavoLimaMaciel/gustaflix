@@ -1,5 +1,5 @@
 import React from 'react';
-import Logo from '../../assets/imagem/Logo.jpg';
+import Logo from '../../assets/imagem/Logo.png';
 import Button from '../Button';
 import './Menu.css';
 
