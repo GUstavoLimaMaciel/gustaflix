@@ -3,24 +3,17 @@ import { Link } from 'react-router-dom';
 import PageDefault from '../../../components/PageDefault';
 import FormField from '../../../components/FormField';
 import Button from '../../../components/Button';
+import useForm from '../../../hooks/useForm';
+import categoriarRepository from '../../../repositories/categorias';
 
 function CadastroCategoria() {
-  const [categorias, setCategoria] = useState([]);
-
   const valoresIniciais = {
-    nome: '',
+    titulo: '',
     descricao: '',
     cor: '#000000',
   };
-
-  const [novaCategoria, setnovaCategoria] = useState(valoresIniciais);
-
-  function changeCategory(event) {
-    setnovaCategoria({
-      ...novaCategoria,
-      [event.target.getAttribute('name')]: event.target.value,
-    });
-  }
+  const { novaCategoria, changeCategory, setnovaCategoria } = useForm(valoresIniciais);
+  const [categorias, setCategoria] = useState([]);
 
   function saveCategory(event) {
     event.preventDefault();
@@ -34,15 +27,9 @@ function CadastroCategoria() {
   }
 
   useEffect(() => {
-    const URL = window.location.href.includes('localhost') ? 'http://localhost:3000/categorias' : 'https://limaflix.herokuapp.com/categorias';
-    fetch(URL)
-      .then(async (respostaDoServer) => {
-        if (respostaDoServer.ok) {
-          const resposta = await respostaDoServer.json();
-          setCategoria(resposta);
-          return;
-        }
-        throw new Error('Não foi possível pegar os dados');
+    categoriarRepository.getAll()
+      .then(async (resposta) => {
+        setCategoria(resposta);
       });
   }, []);
 
@@ -50,12 +37,12 @@ function CadastroCategoria() {
     <PageDefault>
       <h1>
         Cadastro de Categoria:
-        {novaCategoria.nome}
+        {` ${novaCategoria.titulo}`}
       </h1>
 
       <form onSubmit={saveCategory}>
 
-        <FormField value={novaCategoria.nome} onChange={changeCategory} name="nome" type="text" label="Nome da Categoria" />
+        <FormField value={novaCategoria.titulo} onChange={changeCategory} name="titulo" type="text" label="Nome da Categoria" />
         <FormField value={novaCategoria.descricao} onChange={changeCategory} name="descricao" type="textarea" label="Descrição da Categoria" />
         <FormField value={novaCategoria.cor} onChange={changeCategory} name="cor" type="color" label="Cor da Categoria" />
 
@@ -67,7 +54,7 @@ function CadastroCategoria() {
       <ul>
         {categorias.map((categoria, index) => (
           <li key={index}>
-            {categoria.nome}
+            {categoria.titulo}
           </li>
         ))}
       </ul>

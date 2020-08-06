@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import styled, {css} from 'styled-components';
+import styled, { css } from 'styled-components';
 
 const FormFieldWrapper = styled.div`
   position: relative;
@@ -65,12 +65,12 @@ const Input = styled.input`
           transform: scale(.6) translateY(-10px);
         }
       `;
-    }
   }
+}
 `;
 
 function FormField({
-  value, onChange, name, type, label,
+  value, onChange, name, type, label, options,
 }) {
   return (
     <FormFieldWrapper>
@@ -81,10 +81,24 @@ function FormField({
           name={name}
           value={value}
           onChange={(onChange)}
+          autoComplete={type === 'datalist' ? 'on' : 'off'}
+          list={type === 'datalist' ? `option_${name}` : undefined}
         />
         <Label.Text>
           {label}
         </Label.Text>
+        { type === 'datalist'
+        && (
+        <datalist id={`option_${name}`}>
+          {
+            options.map((option) => (
+              <option value={option} key={`option_${name}_${option}`}>
+                {option}
+              </option>
+            ))
+          }
+        </datalist>
+        )}
       </Label>
     </FormFieldWrapper>
   );
@@ -92,9 +106,9 @@ function FormField({
 
 FormField.defaultProps = {
   type: '',
-  value: ''
+  value: '',
+  options: [],
 };
-
 
 FormField.propTypes = {
   value: PropTypes.string,
@@ -102,6 +116,7 @@ FormField.propTypes = {
   name: PropTypes.string.isRequired,
   type: PropTypes.string,
   label: PropTypes.string.isRequired,
+  options: PropTypes.arrayOf(PropTypes.string),
 };
 
 export default FormField;
